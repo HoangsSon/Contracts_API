@@ -290,12 +290,13 @@ def main():
             remove_temporary_file(disasm_file)
             remove_temporary_file(disasm_file + '.log')
 
-        if global_params.STORE_RESULT:
-            if ':' in cname:
-                result_file = os.path.join(global_params.RESULTS_DIR, cname.split(':')[0].replace('.sol', '.json').split('/')[-1])
-                with open(result_file, 'a') as of:
-                    of.write("}")
-    os.system("rm ./0x*.sol")
+        #if global_params.STORE_RESULT:
+            #if ':' in cname:
+                #result_file = os.path.join(global_params.RESULTS_DIR, cname.split(':')[0].replace('.sol', '.json').split('/')[-1])
+                #with open(result_file, 'a') as of:
+                    #of.write("}")
+    #os.system("rm ./0x*.sol")
 
 if __name__ == '__main__':
     main()
+

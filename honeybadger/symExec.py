@@ -80,6 +80,7 @@ def initGlobalVars():
 
     global results
     results = {
+	"contractName": "",
 	"contractAddr": "",
         "evm_code_coverage": "", "execution_time": "", "dead_code": [],
         "execution_paths": "", "timeout": False, "money_flow": False,
@@ -2850,8 +2851,15 @@ def detect_bugs():
 def closing_message():
     global c_name
     global results
-    contractAddr = c_name[:42]
-    results["contractAddr"] = str(contractAddr)
+
+    x = c_name.find(":")+1
+    y = c_name.find(".evm.disasm")
+    results["contractName"] = c_name[x:y]
+
+    x = c_name.find("0x")
+    y = c_name.find(".sol")
+    results["contractAddr"] = c_name[x:y]
+
     log.info("\t====== Analysis Completed ======")
     if global_params.STORE_RESULT:
         result_file = os.path.join(global_params.RESULTS_DIR, c_name+'.json'.split('/')[-1])
@@ -2864,15 +2872,15 @@ def closing_message():
             mode = 'w'
         if not os.path.isfile(result_file):
             with open(result_file, mode) as of:
-                if ':' in c_name:
-                    of.write("{")
-                    of.write('"'+str(c_name.split(':')[1].replace('.evm.disasm', ''))+'":')
+                #if ':' in c_name:
+                    #of.write("{")
+                    #of.write('"'+str(c_name.split(':')[1].replace('.evm.disasm', ''))+'":')
                 of.write(json.dumps(results, indent=1))
         else:
             with open(result_file, mode) as of:
-                if ':' in c_name:
-                    of.write(",")
-                    of.write('"'+str(c_name.split(':')[1].replace('.evm.disasm', ''))+'":')
+                #if ':' in c_name:
+                of.write(",")
+                    #of.write('"'+str(c_name.split(':')[1].replace('.evm.disasm', ''))+'":')
                 of.write(json.dumps(results, indent=1))
         log.info("Wrote results to %s.", result_file)
 

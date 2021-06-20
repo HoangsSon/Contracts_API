@@ -1,7 +1,3 @@
-/**
- *Submitted for verification at Etherscan.io on 2017-11-30
-*/
-
 // Copyright (C) 2017  The Halo Platform by Scott Morrison
 // https://www.haloplatform.tech/
 // 
