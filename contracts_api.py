@@ -12,7 +12,7 @@ app.config["MONGO_URI"] = "mongodb://localhost:27017/contracts"
 mongo = PyMongo(app)
 
 
-API_KEY = "KATYXDXN2WD5PHEK4M51ZBE2277S4IGJT3"
+API_KEY = "" # Your Etherscan API. If you don't have API Key. Try to visit this page: https://etherscan.io/apis
 
 
 class JSONEncoder(json.JSONEncoder):
