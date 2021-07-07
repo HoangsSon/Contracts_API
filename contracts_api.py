@@ -2,7 +2,6 @@ from flask import Flask
 from flask_restful import Api, Resource, abort
 from flask_pymongo import PyMongo
 import json
-from bson import ObjectId
 import os
 import requests
 
@@ -12,14 +11,7 @@ app.config["MONGO_URI"] = "mongodb://localhost:27017/contracts"
 mongo = PyMongo(app)
 
 
-API_KEY = "" # Your Etherscan API. If you don't have API Key. Try to visit this page: https://etherscan.io/apis
-
-
-class JSONEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, ObjectId):
-            return str(o)
-        return json.JSONEncoder.default(self, o)
+API_KEY = "abcdef" # your Etherscan API key https://etherscan.io/myapikey
 
 
 def tryGetSourceEtherscan(contractAddr):
@@ -28,13 +20,6 @@ def tryGetSourceEtherscan(contractAddr):
     r = requests.get(url)
     data = json.loads(r.text)
     return data['result'][0]['SourceCode']
-
-def formatJSONFile(jsonFile):
-    f = open(jsonFile, "r")
-    fileData = f.read()[1:-1]
-    i = fileData.find("{")
-    fileData = fileData[i:]
-    return fileData
 
 class contracts(Resource):
     def get(self, contractAddr):
@@ -47,7 +32,12 @@ class contracts(Resource):
                 f.write(sourcecode)
                 f.close()
                 os.system("python ./honeybadger/honeybadger.py -j -s ./contracts/"+contractAddr+".sol")
-                f = open("./results/"+contractAddr+".json", "r")
+                
+                f = j = None
+                try:
+                    f = open("./results/"+contractAddr+".json", "r")
+                except IOError:
+                    return abort(404, description="Fail to compile source code...")
                 j = f.read()
                 f.close()
                 j = j[1:-1].split("},{")
@@ -71,7 +61,7 @@ class contracts(Resource):
             for x in contractAnalysis:
                 if x["balance_disorder"] != False or x["hidden_state_update"] != False or x["hidden_transfer"] != False or x["straw_man_contract"] != False or x["skip_empty_string_literal"] != False or x["inheritance_disorder"] != False or x["uninitialised_struct"] != False:
                     return x
-            return mongo.db.analysis.find_one(myquery, {"_id":0})
+            return contractAnalysis[contractAnalysis.count() - 1]
 
 api.add_resource(contracts, "/contracts/<string:contractAddr>")
 
